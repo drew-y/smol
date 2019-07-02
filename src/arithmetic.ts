@@ -90,7 +90,7 @@ const parse = (tokens: Token[]): AST => {
         if (token.type === "operator") {
             while (operator.length > 0) {
                 const op = operator[operator.length - 1];
-                if (operatorPrecidence(op.val) > operatorPrecidence(token.val)) {
+                if (operatorPrecidence(op.val) >= operatorPrecidence(token.val)) {
                     output.push([operator.pop()!, output.pop()!, output.pop()!]);
                     continue;
                 }
@@ -119,7 +119,7 @@ const parse = (tokens: Token[]): AST => {
         output.push([operator.pop()!, output.pop()!, output.pop()!]);
     }
 
-    return output[0] as AST;
+    return output;
 }
 
 const execute = (ast: AST): number => {
@@ -155,11 +155,9 @@ const execute = (ast: AST): number => {
     return 0;
 }
 
-const evaluate = (expression: string) => {
+export const evaluate = (expression: string) => {
     const chars = characterize(expression);
     const tokens = lex(chars);
     const ast = parse(tokens);
-    console.log(execute(ast));
+    return execute(ast);
 }
-
-evaluate("4 + (12 - 4) * 2 ^ 3");
