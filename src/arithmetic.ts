@@ -67,7 +67,7 @@ const lex = (chars: string[]) => {
 }
 
 const parse = (tokens: Token[]): AST => {
-    let output: AST = [];
+    const output: AST = [];
     const operator: Token[] = [];
     const operatorPrecidence = (operator: string): number => {
         const precidences: Record<string, number> = {
