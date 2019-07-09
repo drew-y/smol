@@ -13,14 +13,14 @@ export interface Statement {
 
 export interface SmolFunction extends Statement {
     type: "function";
-    arguments: string[];
-    body: Statement[];
+    args: string[];
+    body: AST;
 }
 
 export interface FunctionCall extends Statement {
     type: "function-call";
     function: string;
-    arguments: any[];
+    args: AST;
 }
 
 export interface SmolNumber extends Statement {
@@ -46,14 +46,19 @@ export interface VariableDecleration extends Statement {
 
 export interface IfStatement extends Statement {
     type: "if";
-    condition: Statement;
-    body: Statement[];
+    condition: AST;
+    body: AST;
 }
 
 export interface WhileStatement extends Statement {
     type: "while";
-    condition: Statement;
-    body: Statement[];
+    condition: AST;
+    body: AST;
+}
+
+export interface SmolIdentifier extends Statement {
+    type: "identifier";
+    name: string;
 }
 
 export interface AST extends Array<
@@ -65,5 +70,6 @@ export interface AST extends Array<
     VariableDecleration |
     IfStatement |
     WhileStatement |
+    SmolIdentifier |
     AST
     > { }

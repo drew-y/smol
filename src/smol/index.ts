@@ -1,5 +1,8 @@
 import { inspect } from "util";
 import { lexer } from "./lexer";
 import { smol } from "./example";
+import { parser } from "./parser";
 
-console.log(inspect(lexer(smol), false, 100));
+const tokens = lexer(smol);
+console.log(inspect(tokens, false, 100));
+console.log(inspect(parser(tokens), false, 100));

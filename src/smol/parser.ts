@@ -24,10 +24,53 @@ const operatorPrecidence = (operator: string): number => {
     return precidences[operator];
 }
 
+const parseFnCall = (tokens: Token[]): AST => {
+    const expressions: Token[][] = [];
+    let curExpr: Token[] = [];
+
+    console.log(`Parse fn call`);
+
+    let token = tokens.shift()!;
+    while (token.type !== "right-paren") {
+        if (token.type === "comma") {
+            expressions.push(curExpr);
+            curExpr = [];
+            token = tokens.shift()!;
+            continue;
+        }
+
+        curExpr.push(token);
+        token = tokens.shift()!;
+    }
+
+    const ast: AST = [];
+    for (const expr of expressions) {
+        ast.push(parseStatement(expr));
+    }
+    return ast;
+}
+
+const parseArgs = (tokens: Token[]): string[] => {
+    const args: string[] = [];
+
+    let token = tokens.shift()!;
+    while (token.type !== "pipe") {
+        if (token.type === "comma") {
+            token = tokens.shift()!;
+            continue;
+        }
+
+        args.push(token.value);
+        token = tokens.shift()!;
+    }
+
+    return args;
+}
+
 const parseStatement = (tokens: Token[], terminator?: Token): AST => {
     const output: AST = [];
     const operator: Token[] = [];
-
+    console.log(`Parsing Statement`)
     while (tokens.length > 0) {
         const token = tokens[0];
 
@@ -69,6 +112,32 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
                 continue;
             }
 
+            if (token.value === "if") {
+                tokens.shift();
+                const condition = parseStatement(tokens, { type: "left-curly", value: "{" });
+                const body = parser(tokens);
+                output.push({ type: "if", condition, body });
+                continue;
+            }
+
+            continue;
+        }
+
+        if (token.type === "identifier") {
+            const next = tokens[1];
+            if (next.type === "left-paren") {
+                tokens.shift();
+                tokens.shift();
+                output.push({
+                    type: "function-call",
+                    function: token.value,
+                    args: parseFnCall(tokens),
+                });
+                continue;
+            }
+
+            output.push({ type: "identifier", name: token.value });
+            tokens.shift();
             continue;
         }
 
@@ -79,7 +148,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
                     output.push({
                         type: "function-call",
                         function: operator.pop()!.value,
-                        arguments: [output.pop(), output.pop()]
+                        args: [output.pop()!, output.pop()!]
                     });
                     continue;
                 }
@@ -87,6 +156,14 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
             }
 
             operator.push(tokens.shift()!);
+            continue;
+        }
+
+        if (token.type === "pipe") {
+            tokens.shift();
+            const args = parseArgs(tokens);
+            tokens.shift(); // Get rid of left curly;
+            output.push({ type: "function", args, body: parser(tokens) });
             continue;
         }
 
@@ -112,6 +189,11 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
             break;
         }
 
+        if (token.type === "terminator") {
+            tokens.shift();
+            break;
+        }
+
         throw new Error(`Unexpected token: ${token}`);
     }
 
@@ -119,7 +201,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
         output.push({
             type: "function-call",
             function: operator.pop()!.value,
-            arguments: [output.pop(), output.pop()]
+            args: [output.pop()!, output.pop()!]
         });
     }
 
@@ -127,5 +209,10 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
 }
 
 export const parser = (tokens: Token[]): AST => {
-
+    const ast: AST = [];
+    console.log(`Parsing body`)
+    while (tokens.length > 0) {
+        ast.push(parseStatement(tokens));
+    }
+    return ast;
 }
