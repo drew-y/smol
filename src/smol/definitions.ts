@@ -50,6 +50,11 @@ export interface IfStatement extends Statement {
     body: AST;
 }
 
+export interface ReturnStatement extends Statement {
+    type: "return";
+    exp: AST;
+}
+
 export interface WhileStatement extends Statement {
     type: "while";
     condition: AST;
@@ -71,5 +76,6 @@ export interface AST extends Array<
     IfStatement |
     WhileStatement |
     SmolIdentifier |
+    ReturnStatement |
     AST
     > { }

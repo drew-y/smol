@@ -1,4 +1,5 @@
 import { Token, AST } from "./definitions";
+import { inspect } from "util";
 
 const operatorPrecidence = (operator: string): number => {
     const precidences: Record<string, number> = {
@@ -28,8 +29,6 @@ const parseFnCall = (tokens: Token[]): AST => {
     const expressions: Token[][] = [];
     let curExpr: Token[] = [];
 
-    console.log(`Parse fn call`);
-
     let token = tokens.shift()!;
     while (token.type !== "right-paren") {
         if (token.type === "comma") {
@@ -42,6 +41,7 @@ const parseFnCall = (tokens: Token[]): AST => {
         curExpr.push(token);
         token = tokens.shift()!;
     }
+    expressions.push(curExpr);
 
     const ast: AST = [];
     for (const expr of expressions) {
@@ -70,7 +70,7 @@ const parseArgs = (tokens: Token[]): string[] => {
 const parseStatement = (tokens: Token[], terminator?: Token): AST => {
     const output: AST = [];
     const operator: Token[] = [];
-    console.log(`Parsing Statement`)
+
     while (tokens.length > 0) {
         const token = tokens[0];
 
@@ -102,14 +102,14 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
                 const next = tokens[1];
                 output.push({ type: "variable-decleration", name: next.value, varType: "let" });
                 tokens.shift();
-                continue;
+                break;
             }
 
             if (token.value === "var") {
                 const next = tokens[1];
                 output.push({ type: "variable-decleration", name: next.value, varType: "var" });
                 tokens.shift();
-                continue;
+                break;
             }
 
             if (token.value === "if") {
@@ -120,12 +120,18 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
                 continue;
             }
 
-            continue;
+            if (token.value === "return") {
+                tokens.shift();
+                output.push({ type: "return", exp: parseStatement(tokens) });
+                continue;
+            }
+
+            throw new Error(`Unkown keyword: ${token.value}`);
         }
 
         if (token.type === "identifier") {
             const next = tokens[1];
-            if (next.type === "left-paren") {
+            if (next && next.type === "left-paren") {
                 tokens.shift();
                 tokens.shift();
                 output.push({
@@ -185,7 +191,6 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
         }
 
         if (token.type === "right-curly") {
-            tokens.shift();
             break;
         }
 
@@ -210,9 +215,15 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
 
 export const parser = (tokens: Token[]): AST => {
     const ast: AST = [];
-    console.log(`Parsing body`)
+
     while (tokens.length > 0) {
+        if (tokens[0].type === "right-curly") {
+            tokens.shift();
+            break;
+        }
+
         ast.push(parseStatement(tokens));
     }
+
     return ast;
 }
