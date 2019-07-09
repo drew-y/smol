@@ -15,6 +15,8 @@ const isOperator = (str: string) => operators.includes(str);
 
 const isKeyword = (str: string) => keywords.includes(str);
 
+const isBool = (str: string) => str === "true" || str === "false";
+
 const extractWord = (chars: string[]) => {
     let word = "";
     while (isLetter(chars[0]) || isNum(chars[0])) {
@@ -87,6 +89,11 @@ export const lexer = (code: string) => {
 
             if (isOperator(word)) {
                 tokens.push({ type: "operator", value: word });
+                continue;
+            }
+
+            if (isBool(word)) {
+                tokens.push({ type: "boolean", value: word });
                 continue;
             }
 

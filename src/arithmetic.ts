@@ -112,7 +112,7 @@ const parse = (tokens: Token[]): AST => {
             break;
         }
 
-        throw new Error(`Unexpected token: ${token}`)
+        throw new Error(`Unexpected token: ${token}`);
     }
 
     while (operator.length > 0) {
@@ -122,11 +122,11 @@ const parse = (tokens: Token[]): AST => {
     return output;
 }
 
-const execute = (ast: AST): number => {
+const interpret = (ast: AST): number => {
     const token = ast.shift()!;
 
     if (token instanceof Array) {
-        return execute(token);
+        return interpret(token);
     }
 
     if (token.type === "number") {
@@ -134,8 +134,8 @@ const execute = (ast: AST): number => {
     }
 
     if (token.type === "operator") {
-        const left = execute([ast.pop()!]);
-        const right = execute([ast.pop()!]);
+        const left = interpret([ast.pop()!]);
+        const right = interpret([ast.pop()!]);
         switch (token.val) {
             case "+":
                 return left + right;
@@ -159,5 +159,5 @@ export const evaluate = (expression: string) => {
     const chars = characterize(expression);
     const tokens = lex(chars);
     const ast = parse(tokens);
-    return execute(ast);
+    return interpret(ast);
 }

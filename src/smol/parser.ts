@@ -24,20 +24,32 @@ const operatorPrecidence = (operator: string): number => {
     return precidences[operator];
 }
 
-export const parser = (tokens: Token[]) => {
-    const output: AST[] = [];
+const parseStatement = (tokens: Token[], terminator?: Token): AST => {
+    const output: AST = [];
     const operator: Token[] = [];
 
     while (tokens.length > 0) {
         const token = tokens[0];
+
+        if (terminator && token.type === terminator.type && token.value === terminator.value) {
+            tokens.shift();
+            break;
+        }
+
         if (token.type === "number") {
-            output.push({ type: "value", value: Number(token.value) });
+            output.push({ type: "number", value: Number(token.value) });
             tokens.shift();
             continue;
         }
 
         if (token.type === "string") {
-            output.push({ type: "value", value: token.value });
+            output.push({ type: "string", value: token.value });
+            tokens.shift();
+            continue;
+        }
+
+        if (token.type === "boolean") {
+            output.push({ type: "boolean", value: token.value === "true" });
             tokens.shift();
             continue;
         }
@@ -77,5 +89,43 @@ export const parser = (tokens: Token[]) => {
             operator.push(tokens.shift()!);
             continue;
         }
+
+        if (token.type === "left-paren") {
+            tokens.shift();
+            output.push(parseStatement(tokens));
+            continue;
+        }
+
+        if (token.type === "right-paren") {
+            tokens.shift();
+            break;
+        }
+
+        if (token.type === "left-curly") {
+            tokens.shift();
+            output.push(parser(tokens));
+            continue;
+        }
+
+        if (token.type === "right-curly") {
+            tokens.shift();
+            break;
+        }
+
+        throw new Error(`Unexpected token: ${token}`);
     }
+
+    while (operator.length > 0) {
+        output.push({
+            type: "function-call",
+            function: operator.pop()!.value,
+            arguments: [output.pop(), output.pop()]
+        });
+    }
+
+    return output;
+}
+
+export const parser = (tokens: Token[]): AST => {
+
 }

@@ -3,7 +3,7 @@ export type Token = {
     type:
     "operator" | "keyword" | "terminator" | "identifier" | "left-paren" |
     "right-paren" | "pipe" | "left-curly" | "right-curly" | "string" | "number" |
-    "comma";
+    "comma" | "boolean";
     value: string;
 }
 
@@ -11,12 +11,7 @@ export interface Statement {
     type: string;
 }
 
-export interface Body extends Statement {
-    type: "body";
-    statements: Statement[];
-}
-
-export interface Function extends Statement {
+export interface SmolFunction extends Statement {
     type: "function";
     arguments: string[];
     body: Statement[];
@@ -28,9 +23,19 @@ export interface FunctionCall extends Statement {
     arguments: any[];
 }
 
-export interface Value extends Statement {
-    type: "value";
-    value: any;
+export interface SmolNumber extends Statement {
+    type: "number";
+    value: number;
+}
+
+export interface SmolString extends Statement {
+    type: "string";
+    value: string;
+}
+
+export interface SmolBool extends Statement {
+    type: "boolean";
+    value: boolean;
 }
 
 export interface VariableDecleration extends Statement {
@@ -51,11 +56,14 @@ export interface WhileStatement extends Statement {
     body: Statement[];
 }
 
-export type AST =
-    Body |
-    Function |
+export interface AST extends Array<
+    SmolFunction |
     FunctionCall |
-    Value |
+    SmolNumber |
+    SmolBool |
+    SmolString |
     VariableDecleration |
     IfStatement |
-    WhileStatement;
+    WhileStatement |
+    AST
+    > { }
