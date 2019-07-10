@@ -112,7 +112,7 @@ export const lexer = (code: string) => {
         }
 
         if (char === "\"") {
-            tokens.push({ type: "string", value: `${char}${extractString(chars)}` });
+            tokens.push({ type: "string", value: extractString(chars) });
             continue;
         }
 
