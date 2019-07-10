@@ -1,4 +1,4 @@
-import { Token, AST } from "./definitions";
+import { Token, AST, Instruction } from "./definitions";
 import { inspect } from "util";
 
 const operatorPrecidence = (operator: string): number => {
@@ -67,7 +67,7 @@ const parseArgs = (tokens: Token[]): string[] => {
     return args;
 }
 
-const parseStatement = (tokens: Token[], terminator?: Token): AST => {
+const parseStatement = (tokens: Token[], terminator?: Token): AST | Instruction => {
     const output: AST = [];
     const operator: Token[] = [];
 
@@ -210,7 +210,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST => {
         });
     }
 
-    return output;
+    return output[0];
 }
 
 export const parser = (tokens: Token[]): AST => {
