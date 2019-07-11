@@ -101,18 +101,17 @@ export const interpreter = (ast: AST | Instruction, mem: Mem): Value => {
     }
 
     if (ast.type === "function-call") {
-        const result = interpretFnCall(ast, mem);
-        return result;
+        return interpretFnCall(ast, mem);
     }
 
     if (ast.type === "return") {
-        return { isReturn: true, val: interpreter(ast.exp, mem) };
+        return { isReturn: true, val: interpreter(ast.exp, mem).val };
     }
 
     if (ast.type === "if") {
         const result = interpreter(ast.condition, mem);
         if (result.val) {
-            return { val: interpreter(ast.body, mem) };
+            return interpreter(ast.body, mem);
         }
         return { val: undefined };
     }
