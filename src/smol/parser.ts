@@ -26,27 +26,19 @@ const operatorPrecidence = (operator: string): number => {
 }
 
 const parseFnCall = (tokens: Token[]): AST => {
-    const expressions: Token[][] = [];
-    let curExpr: Token[] = [];
+    const ast: AST = [];
 
-    let token = tokens.shift()!;
+    let token = tokens[0];
     while (token.type !== "right-paren") {
         if (token.type === "comma") {
-            expressions.push(curExpr);
-            curExpr = [];
-            token = tokens.shift()!;
-            continue;
+            tokens.shift();
         }
 
-        curExpr.push(token);
-        token = tokens.shift()!;
+        ast.push(parseStatement(tokens))
+        token = tokens[0];
     }
-    expressions.push(curExpr);
+    tokens.shift(); // Remove right paren;
 
-    const ast: AST = [];
-    for (const expr of expressions) {
-        ast.push(parseStatement(expr));
-    }
     return ast;
 }
 
@@ -176,12 +168,8 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST | Instruction 
         if (token.type === "left-paren") {
             tokens.shift();
             output.push(parseStatement(tokens));
-            continue;
-        }
-
-        if (token.type === "right-paren") {
             tokens.shift();
-            break;
+            continue;
         }
 
         if (token.type === "left-curly") {
@@ -190,7 +178,18 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST | Instruction 
             continue;
         }
 
+        // Non-consumed terminator
         if (token.type === "right-curly") {
+            break;
+        }
+
+        // Non-consumed terminator
+        if (token.type === "right-paren") {
+            break;
+        }
+
+        // Non-consumed terminator
+        if (token.type === "comma") {
             break;
         }
 

@@ -1,5 +1,5 @@
 
-export const smol = `
+export const smolFib = `
     let count = 10;
 
     let fib = |n| {
@@ -14,3 +14,32 @@ export const smol = `
 `;
 
 // Should eval to 512
+
+export const smolBasic = `
+    let a = 1;
+    let b = 2;
+    let add = |x, y| { x + y; };
+    let result = add(a, b);
+    print("The result is");
+    print(result);
+`;
+
+export const smolEasyTest = `
+    let x = 1;
+    let y = 7;
+
+    let do_math = |x, y| {
+        let add = |a, b| { a + b };
+        print("x is:");
+        print(x);
+        print("y is:");
+        print(y);
+        print("x + y:");
+        print(add(x, y));
+        if y > 3 {
+            print("y is greater than 3");
+        }
+    };
+
+    do_math(x, y);
+`;

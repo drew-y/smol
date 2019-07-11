@@ -46,19 +46,19 @@ export interface VariableDecleration extends Statement {
 
 export interface IfStatement extends Statement {
     type: "if";
-    condition: AST;
-    body: AST;
+    condition: AST | Instruction;
+    body: AST | Instruction;
 }
 
 export interface ReturnStatement extends Statement {
     type: "return";
-    exp: AST;
+    exp: AST | Instruction;
 }
 
 export interface WhileStatement extends Statement {
     type: "while";
-    condition: AST;
-    body: AST;
+    condition: AST | Instruction;
+    body: AST | Instruction;
 }
 
 export interface SmolIdentifier extends Statement {
@@ -66,7 +66,7 @@ export interface SmolIdentifier extends Statement {
     name: string;
 }
 
-export interface AST extends Array<
+export type Instruction =
     SmolFunction |
     FunctionCall |
     SmolNumber |
@@ -76,6 +76,18 @@ export interface AST extends Array<
     IfStatement |
     WhileStatement |
     SmolIdentifier |
-    ReturnStatement |
-    AST
-    > { }
+    ReturnStatement;
+
+export interface AST extends Array<Instruction | AST> { }
+
+export interface Value {
+    isReturn?: boolean;
+    val: any;
+}
+
+export interface Mem {
+    [key: string]: {
+        memType: "let" | "var";
+        val: Value | undefined;
+    }
+}
