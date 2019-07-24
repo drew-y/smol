@@ -1,5 +1,4 @@
 import { Token, AST, Instruction } from "./definitions";
-import { inspect } from "util";
 
 const operatorPrecidence = (operator: string): number => {
     const precidences: Record<string, number> = {
@@ -59,7 +58,7 @@ const parseArgs = (tokens: Token[]): string[] => {
     return args;
 }
 
-const parseStatement = (tokens: Token[], terminator?: Token): AST | Instruction => {
+const parseStatement = (tokens: Token[], terminator?: Token): Instruction => {
     const output: AST = [];
     const operator: Token[] = [];
 
@@ -209,7 +208,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): AST | Instruction 
         });
     }
 
-    return output[0];
+    return output[0] as Instruction;
 }
 
 export const parser = (tokens: Token[]): AST => {

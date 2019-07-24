@@ -30,12 +30,10 @@ export const smolEasyTest = `
 
     let do_math = |x, y| {
         let add = |a, b| { a + b };
-        print("x is:");
-        print(x);
-        print("y is:");
-        print(y);
+
         print("x + y:");
         print(add(x, y));
+
         if y > 3 {
             print("y is greater than 3");
         }

@@ -1,8 +1,8 @@
 {
-  "name": "languages",
+  "name": "smol",
   "version": "1.0.0",
   "description": "This repo is meant to be a place for experimenting with programming language design, parsing and compiling.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest"
   },
