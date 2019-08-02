@@ -74,51 +74,49 @@ const interpretFnCall = (call: FunctionCall, mem: Mem): Value => {
     return interpreter(fn.body, { ...mem, ...args });
 };
 
-export const interpreter = (ast: AST | Instruction, mem: Mem): Value => {
-    if (!ast) return { val: undefined };
-
-    if (ast instanceof Array) {
+export const interpreter = (instruction: AST | Instruction, mem: Mem): Value => {
+    if (instruction instanceof Array) {
         let val: Value = { val: undefined };
-        for (const instr of ast) {
+        for (const instr of instruction) {
             val = interpreter(instr, mem);
             if (val.isReturn) { return val; }
         }
         return val;
     }
 
-    if (ast.type === "string" || ast.type === "boolean" || ast.type === "number") {
-        return { val: ast.value };
+    if (instruction.type === "string" || instruction.type === "boolean" || instruction.type === "number") {
+        return { val: instruction.value };
     }
 
-    if (ast.type === "function") {
-        return { val: ast };
+    if (instruction.type === "function") {
+        return { val: instruction };
     }
 
-    if (ast.type === "variable-decleration") {
-        if (mem[ast.name]) throw new Error(`Variable ${ast.name} is already defined`);
-        mem[ast.name] = { memType: ast.varType, val: undefined };
+    if (instruction.type === "variable-decleration") {
+        if (mem[instruction.name]) throw new Error(`Variable ${instruction.name} is already defined`);
+        mem[instruction.name] = { memType: instruction.varType, val: undefined };
         return { val: undefined };
     }
 
-    if (ast.type === "function-call") {
-        return interpretFnCall(ast, mem);
+    if (instruction.type === "function-call") {
+        return interpretFnCall(instruction, mem);
     }
 
-    if (ast.type === "return") {
-        return { isReturn: true, val: interpreter(ast.exp, mem).val };
+    if (instruction.type === "return") {
+        return { isReturn: true, val: interpreter(instruction.exp, mem).val };
     }
 
-    if (ast.type === "if") {
-        const result = interpreter(ast.condition, mem);
+    if (instruction.type === "if") {
+        const result = interpreter(instruction.condition, mem);
         if (result.val) {
-            return interpreter(ast.body, mem);
+            return interpreter(instruction.body, { ...mem });
         }
         return { val: undefined };
     }
 
-    if (ast.type === "identifier") {
-        return { val: mem[ast.name].val!.val! }
+    if (instruction.type === "identifier") {
+        return { val: mem[instruction.name].val!.val! }
     }
 
-    throw new Error(`Unkown instruction ${inspect(ast, false, 100)}`);
+    throw new Error(`Unkown instruction ${inspect(instruction, false, 100)}`);
 };
