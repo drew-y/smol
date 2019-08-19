@@ -55,6 +55,15 @@ export interface ReturnStatement extends Statement {
     exp: AST | Instruction;
 }
 
+export interface BreakStatement extends Statement {
+    type: "break";
+    exp: AST | Instruction;
+}
+
+export interface ContinueStatement extends Statement {
+    type: "continue";
+}
+
 export interface WhileStatement extends Statement {
     type: "while";
     condition: AST | Instruction;
@@ -76,11 +85,15 @@ export type Instruction =
     IfStatement |
     WhileStatement |
     SmolIdentifier |
+    BreakStatement |
+    ContinueStatement |
     ReturnStatement;
 
 export interface AST extends Array<Instruction | AST> { }
 
 export interface Value {
+    isBreak?: boolean;
+    isContinue?: boolean;
     isReturn?: boolean;
     val: any;
 }

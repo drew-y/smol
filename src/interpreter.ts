@@ -113,11 +113,13 @@ const interpretFnCall = (call: FunctionCall, mem: Mem): Value => {
 };
 
 export const interpreter = (instruction: AST | Instruction, mem: Mem): Value => {
+    if (!instruction) return { val: undefined };
+
     if (instruction instanceof Array) {
         let val: Value = { val: undefined };
         for (const instr of instruction) {
             val = interpreter(instr, mem);
-            if (val.isReturn) { return val; }
+            if (val.isReturn || val.isContinue || val.isBreak) return val;
         }
         return val;
     }
@@ -144,12 +146,29 @@ export const interpreter = (instruction: AST | Instruction, mem: Mem): Value => 
         return { isReturn: true, val: interpreter(instruction.exp, mem).val };
     }
 
+    if (instruction.type === "break") {
+        return { isBreak: true, val: interpreter(instruction.exp, mem).val };
+    }
+
+    if (instruction.type === "continue") {
+        return { isContinue: true, val: undefined };
+    }
+
     if (instruction.type === "if") {
         const result = interpreter(instruction.condition, mem);
         if (result.val) {
             return interpreter(instruction.body, { ...mem });
         }
         return { val: undefined };
+    }
+
+    if (instruction.type === "while") {
+        let result: Value = { val: undefined };
+        while (interpreter(instruction.condition, mem).val) {
+            result = interpreter(instruction.body, { ...mem });
+            if (result.isBreak) return result;
+        }
+        return result;
     }
 
     if (instruction.type === "identifier") {

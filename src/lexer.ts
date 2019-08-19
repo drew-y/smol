@@ -5,7 +5,7 @@ const operators = [
     "=>", ".", "?"
 ];
 
-const keywords = ["let", "var", "for", "in", "return", "break", "continue", "if", "else", "elif"];
+const keywords = ["let", "var", "for", "in", "return", "break", "continue", "if", "else", "elif", "while"];
 
 const isLetter = (char: string) => (/[a-zA-Z]|_/g).test(char);
 

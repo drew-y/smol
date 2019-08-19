@@ -5,15 +5,21 @@ export const smolFib = `
         fib(n - 1) + fib(n - 2)
     };
 
-    let result = fib(10);
-    print("The result is:");
-    print(result);
+    print("fib(10) is: " + fib(10));
+`;
+
+export const smolWhile = `
+    var result = 0;
+    while result < 20 {
+        result = result + 2;
+        print("result: " + result);
+    };
 `;
 
 export const smolBasic = `
     let a = 1;
     let b = 2;
-    let add = |x, y| { x + y; };
+    let add = |x, y| { x + y };
     let result = add(a, b);
     print("The result is");
     print(result);

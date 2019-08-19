@@ -2,24 +2,24 @@ import { Token, AST, Instruction } from "./definitions";
 
 const operatorPrecidence = (operator: string): number => {
     const precidences: Record<string, number> = {
-        "and": 0,
-        "or": 0,
-        "xor": 0,
-        "==": 1,
-        "<": 1,
-        ">": 1,
-        ">=": 1,
-        "<=": 1,
-        "<>": 1,
-        "?": 1,
-        "+": 1,
-        "-": 1,
-        "*": 2,
-        "/": 2,
-        "^": 3,
-        ".": 4,
-        "=": 5,
-        "=>": 5
+        "and": 1,
+        "or": 1,
+        "xor": 1,
+        "==": 2,
+        "<": 2,
+        ">": 2,
+        ">=": 2,
+        "<=": 2,
+        "<>": 2,
+        "?": 2,
+        "+": 2,
+        "-": 2,
+        "*": 3,
+        "/": 3,
+        "^": 4,
+        ".": 5,
+        "=": 0,
+        "=>": 0
     }
     return precidences[operator];
 }
@@ -111,9 +111,30 @@ const parseStatement = (tokens: Token[], terminator?: Token): Instruction => {
                 continue;
             }
 
+
+            if (token.value === "while") {
+                tokens.shift();
+                const condition = parseStatement(tokens, { type: "left-curly", value: "{" });
+                const body = parser(tokens);
+                output.push({ type: "while", condition, body });
+                continue;
+            }
+
             if (token.value === "return") {
                 tokens.shift();
                 output.push({ type: "return", exp: parseStatement(tokens) });
+                continue;
+            }
+
+            if (token.value === "break") {
+                tokens.shift();
+                output.push({ type: "break", exp: parseStatement(tokens) });
+                continue;
+            }
+
+            if (token.value === "continue") {
+                tokens.shift();
+                output.push({ type: "continue" });
                 continue;
             }
 

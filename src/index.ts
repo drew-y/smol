@@ -1,5 +1,5 @@
 import { lexer } from "./lexer";
-import { smolBasic, smolFib, smolEasyTest } from "./example";
+import { smolBasic, smolFib, smolEasyTest, smolWhile } from "./example";
 import { parser } from "./parser";
 import { interpreter } from "./interpreter";
 
@@ -9,4 +9,4 @@ export const evaluate = (smol: string) => {
     interpreter(ast, {});
 };
 
-evaluate(smolFib);
+evaluate(smolWhile);
