@@ -1,14 +1,11 @@
 
 export const smolFib = `
-    let count = 10;
-
     let fib = |n| {
-        if n < 1 { return 0; };
-        if n == 1 { return 1; };
-        fib(n - 1) + fib(n - 2);
+        if n <= 1 { return n };
+        fib(n - 1) + fib(n - 2)
     };
 
-    let result = fib(count);
+    let result = fib(10);
     print("The result is:");
     print(result);
 `;

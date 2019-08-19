@@ -25,6 +25,41 @@ const interpretFnCall = (call: FunctionCall, mem: Mem): Value => {
         return { val: left < right };
     }
 
+    if (call.function === "and") {
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
+
+        return { val: left && right };
+    }
+
+    if (call.function === "or") {
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
+
+        return { val: left || right };
+    }
+
+    if (call.function === "<=") {
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
+
+        return { val: left <= right };
+    }
+
+    if (call.function === ">=") {
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
+
+        return { val: left >= right };
+    }
+
+    if (call.function === "<>") {
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
+
+        return { val: left !== right };
+    }
+
     if (call.function === ">") {
         const left = interpreter(arg1, mem)!.val;
         const right = interpreter(arg2, mem)!.val;
