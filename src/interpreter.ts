@@ -2,8 +2,11 @@ import { AST, Instruction, Mem, FunctionCall, Value, SmolFunction } from "./defi
 import { inspect } from "util";
 
 const interpretFnCall = (call: FunctionCall, mem: Mem): Value => {
+    const arg1 = call.args[call.args.length - 1];
+    const arg2 = call.args[call.args.length - 2];
+
     if (call.function === "=") {
-        const identifier = call.args.pop()!;
+        const identifier = arg1;
         if (identifier instanceof Array) throw Error("Syntax error on assignment");
         if (identifier.type !== "identifier") throw new Error("Expected identifier at assignment");
         const existing = mem[identifier.name];
@@ -11,55 +14,55 @@ const interpretFnCall = (call: FunctionCall, mem: Mem): Value => {
         if (existing.memType === "let" && existing.val) {
             throw new Error("Variable already assigned");
         }
-        existing.val = interpreter(call.args.pop()!, mem); // TODO ad safety here
+        existing.val = interpreter(arg2, mem);
         return { val: undefined };
     }
 
     if (call.function === "<") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
 
         return { val: left < right };
     }
 
     if (call.function === ">") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left > right };
     }
 
     if (call.function === "==") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left === right };
     }
 
     if (call.function === "+") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left + right };
     }
 
     if (call.function === "-") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left - right };
     }
 
     if (call.function === "*") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left * right };
     }
 
     if (call.function === "/") {
-        const left = interpreter(call.args.pop()!, mem)!.val;
-        const right = interpreter(call.args.pop()!, mem)!.val;
+        const left = interpreter(arg1, mem)!.val;
+        const right = interpreter(arg2, mem)!.val;
         return { val: left / right };
     }
 
     if (call.function === "print") {
-        console.log(interpreter(call.args.pop()!, mem)!.val);
+        console.log(interpreter(arg1, mem)!.val);
         return { val: undefined };
     }
 

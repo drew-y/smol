@@ -9,4 +9,4 @@ export const evaluate = (smol: string) => {
     interpreter(ast, {});
 };
 
-evaluate(smolEasyTest);
+evaluate(smolFib);
