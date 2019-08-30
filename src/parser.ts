@@ -1,6 +1,6 @@
 import { Token, AST, Instruction } from "./definitions";
 
-const operatorPrecidence = (operator: string): number => {
+const operatorPrecedence = (operator: string): number => {
     const precidences: Record<string, number> = {
         "and": 1,
         "or": 1,
@@ -162,7 +162,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): Instruction => {
         if (token.type === "operator") {
             while (operator.length > 0) {
                 const op = operator[operator.length - 1];
-                if (operatorPrecidence(op.value) >= operatorPrecidence(token.value)) {
+                if (operatorPrecedence(op.value) >= operatorPrecedence(token.value)) {
                     output.push({
                         type: "function-call",
                         function: operator.pop()!.value,
