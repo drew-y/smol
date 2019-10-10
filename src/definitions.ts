@@ -38,8 +38,8 @@ export interface SmolBool extends Statement {
     value: boolean;
 }
 
-export interface VariableDecleration extends Statement {
-    type: "variable-decleration";
+export interface VariableDeclaration extends Statement {
+    type: "variable-declaration";
     name: string;
     varType: "let" | "var";
 }
@@ -81,7 +81,7 @@ export type Instruction =
     SmolNumber |
     SmolBool |
     SmolString |
-    VariableDecleration |
+    VariableDeclaration |
     IfStatement |
     WhileStatement |
     SmolIdentifier |

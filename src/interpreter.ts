@@ -132,7 +132,7 @@ export const interpreter = (instruction: AST | Instruction, mem: Mem): Value => 
         return { val: instruction };
     }
 
-    if (instruction.type === "variable-decleration") {
+    if (instruction.type === "variable-declaration") {
         if (mem[instruction.name]) throw new Error(`Variable ${instruction.name} is already defined`);
         mem[instruction.name] = { memType: instruction.varType, val: undefined };
         return { val: undefined };
