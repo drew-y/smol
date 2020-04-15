@@ -1,7 +1,7 @@
 import { Token, AST, Instruction } from "./definitions";
 
 const operatorPrecedence = (operator: string): number => {
-    const precidences: Record<string, number> = {
+    const precedences: Record<string, number> = {
         "and": 1,
         "or": 1,
         "xor": 1,
@@ -21,7 +21,7 @@ const operatorPrecedence = (operator: string): number => {
         "=": 0,
         "=>": 0
     }
-    return precidences[operator];
+    return precedences[operator];
 }
 
 const parseFnCall = (tokens: Token[]): AST => {
@@ -138,7 +138,7 @@ const parseStatement = (tokens: Token[], terminator?: Token): Instruction => {
                 continue;
             }
 
-            throw new Error(`Unkown keyword: ${token.value}`);
+            throw new Error(`Unknown keyword: ${token.value}`);
         }
 
         if (token.type === "identifier") {
