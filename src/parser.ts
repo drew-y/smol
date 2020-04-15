@@ -91,14 +91,14 @@ const parseStatement = (tokens: Token[], terminator?: Token): Instruction => {
         if (token.type === "keyword") {
             if (token.value === "let") {
                 const next = tokens[1];
-                output.push({ type: "variable-decleration", name: next.value, varType: "let" });
+                output.push({ type: "variable-declaration", name: next.value, varType: "let" });
                 tokens.shift();
                 break;
             }
 
             if (token.value === "var") {
                 const next = tokens[1];
-                output.push({ type: "variable-decleration", name: next.value, varType: "var" });
+                output.push({ type: "variable-declaration", name: next.value, varType: "var" });
                 tokens.shift();
                 break;
             }
